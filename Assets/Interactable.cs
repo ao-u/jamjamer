@@ -268,8 +268,16 @@ public class Interactable : MonoBehaviour
                 Director.LogTemp("uhhh im a vent", Color.gray, 1f);
                 soundeffect = "wiggle";
                 break;
+            case "menuplay":
+                soundeffect = "selectyes";
+                Menu.Play();
+                break;
+            case "menuquit":
+                soundeffect = "selectno";
+                Menu.Quit();
+                break;
             default:
-                Director.LogTemp("interactable not indexable idiot", Color.red, 1f);
+                Debug.Log("wrong interactable index: " + s);
                 soundeffect = "selectno";
                 break;
         }
