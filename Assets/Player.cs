@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Player : MonoBehaviour
@@ -106,7 +107,7 @@ public class Player : MonoBehaviour
         jump -= Time.deltaTime;
         jump = (Input.GetKey(KeyCode.Space) || Input.mouseScrollDelta.y < 0f) ? .1f : jump;
         leftclick -= Time.deltaTime;
-        leftclick = (Input.GetMouseButtonDown(0) || Input.mouseScrollDelta.y > 0f) ? .1f : leftclick;
+        leftclick = (Input.GetMouseButtonDown(0) || Input.mouseScrollDelta.y > 0f || Input.GetKeyDown(KeyCode.E)) ? .1f : leftclick;
         rightclick -= Time.deltaTime;
         rightclick = Input.GetMouseButtonDown(1) ? .1f : rightclick;
     }
@@ -165,8 +166,11 @@ public class Player : MonoBehaviour
         Vector3 closestpoint = new Vector3(99999f, 99999f, 99999f);
         foreach (Collider cc in c)
         {
-            Vector3 p = cc.ClosestPoint(spherepos);
-            if (Vector3.Distance(p, spherepos) < Vector3.Distance(closestpoint, spherepos)) closestpoint = p;
+            if (!cc.isTrigger)
+            {
+                Vector3 p = cc.ClosestPoint(spherepos);
+                if (Vector3.Distance(p, spherepos) < Vector3.Distance(closestpoint, spherepos)) closestpoint = p;
+            }
         }
         point = closestpoint;
         touchingsurface = point.magnitude < 999f;
@@ -212,7 +216,7 @@ public class Player : MonoBehaviour
 
         if (shifttimer < 0f && shift > 0f)
         {
-            Director.LogTemp("shifted", Color.green);
+            //Director.LogTemp("shifted", Color.green);
             float shiftspeed = 90f;
             shifttimer = shiftmax;
             Vector3 shiftdir = Vector3.Lerp(wishdir, Director.maincamera.transform.forward, .7f).normalized;
@@ -281,5 +285,19 @@ public class Player : MonoBehaviour
     {
         //Director.LogTemp("CB !", Color.red);
 
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.transform.name == "safeTrigger")
+        {
+            Director.fleshtimerpaused = .2f;
+        }
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.name == "FEED")
+        {
+            Director.Death();
+        }
     }
 }

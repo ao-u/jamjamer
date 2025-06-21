@@ -16,12 +16,13 @@ public class Interactable : MonoBehaviour
     {
         if (transform.Find("hitbox") == null)
         {
-            Director.LogTemp("FAKE INTERACTABLE NO HITBOX!!!", Color.red);
+            Director.LogTemp("FAKE INTERACTABLE NO HITBOX!!!", Color.red, 1f);
             return;
         }
         hitbox = transform.Find("hitbox").gameObject;
         baseScale = transform.localScale;
         baseRot = transform.localRotation;
+        //asdas
 
         if (GetComponent<AudioSource>() == null)
         {
@@ -30,7 +31,7 @@ public class Interactable : MonoBehaviour
         aud = GetComponent<AudioSource>();
 
         
-        if (index == "pickup")
+        if (index.Contains("pickup"))
         {
             if (gameObject.GetComponent<Rigidbody>() == null)
             {
@@ -105,9 +106,23 @@ public class Interactable : MonoBehaviour
         if (rb != null && !pickedup)
         {
             Director.ApplyGravity(rb);
-            rb.velocity *= .99f;
+            rb.velocity *= .95f;
         }
         
+
+        if (index == "quota")
+        {
+            if (Director.quotaprogress >= Director.quota)
+            {
+                if (GameObject.Find("quotaBlock") != null)
+                Destroy(GameObject.Find("quotaBlock"));
+
+                Director.LogTemp("QUOTA_MET", Color.white, 3f);
+                Director.quotaprogress = 0;
+                Director.quotatier++;
+                Director.CalculateQuota();
+            }
+        }
     }
     void Update()
     {
@@ -183,6 +198,30 @@ public class Interactable : MonoBehaviour
         string soundeffect = "selectno";
         switch (s)
         {
+            case "lock":
+                Director.LogTemp("You have not met the quota.", Color.white, 3f);
+                break;
+            case "quota":
+                Color c = new Color(138f, 74f, 82f);
+
+                
+
+                if (value < 1f)
+                {
+                    Director.LogTemp("Your quota must be reached within your feeble lifespan", c, 3f);
+                    value = 1.5f;
+                }
+                else if (value < 2f)
+                {
+                    Director.LogTemp("Feed the machine " + Director.C("SCRAP", Color.green) + " to meet your quota.", c, 3f);
+                    value = 2.5f;
+                }
+                else if (value < 3f)
+                {
+                    Director.LogTemp("Feed the machine " + Director.C("FLESH", Color.red) + " in order to live longer.", c, 3f);
+                    value = 0f;
+                }
+                break;
             case "roomspawner":
                 soundeffect = "selectyes";
                 if (GameObject.Find("spawnRoom") != null)
@@ -210,23 +249,27 @@ public class Interactable : MonoBehaviour
                 break;
             case "lockeddoor":
                 soundeffect = "selectno";
-                Director.LogTemp("im locked!", Color.red);
+                Director.LogTemp("im locked!", Color.red, 1f);
                 break;
             case "door":
                 soundeffect = "selectyes";
                 value = value > 1f ? 0f : 99f;
                 transform.parent.localEulerAngles = value > 1f ? new Vector3(0f, 115f, 0f) : new Vector3(0f, 0f, 0f);
                 break;
-            case "pickup":
+            case "pickupflesh":
+                soundeffect = "selectyes";
+                Pickup();
+                break;
+            case "pickuptech":
                 soundeffect = "selectyes";
                 Pickup();
                 break;
             case "vent":
-                Director.LogTemp("uhhh im a vent", Color.gray);
+                Director.LogTemp("uhhh im a vent", Color.gray, 1f);
                 soundeffect = "wiggle";
                 break;
             default:
-                Director.LogTemp("interactable not indexable idiot", Color.red);
+                Director.LogTemp("interactable not indexable idiot", Color.red, 1f);
                 soundeffect = "selectno";
                 break;
         }
@@ -236,12 +279,23 @@ public class Interactable : MonoBehaviour
     {
         if (c.transform.name == "FEED")
         {
-            Director.LogTemp("consumed", Color.green);
+            //Director.LogTemp("consumed", Color.green, 1f);
+            Director.PlaySound("hurt", Director.aud);
             GameObject itempref = Resources.Load<GameObject>("prefabs/item1");
             Vector3 spawnloc = GameObject.Find("PRODUCE").transform.position;
             GameObject g = Instantiate(itempref, spawnloc, Quaternion.identity);
             g.transform.position += new Vector3(Random.Range(-.5f, .5f), 0f, Random.Range(-.5f, .5f));
-            Director.fleshtimer += 20f;
+            
+            if (index == "pickupflesh")
+            {
+                Director.fleshtimer += 20f;
+            }
+            if (index == "pickuptech")
+            {
+                Director.quotaprogress += 1;
+            }
+
+
             Destroy(gameObject);
         }
     }

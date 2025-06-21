@@ -102,7 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseRot: {x: 0, y: 0, z: 0, w: 0}
-  index: pickup
+  index: pickuptech
   pickedup: 0
 --- !u!54 &1977919029970221174
 Rigidbody:

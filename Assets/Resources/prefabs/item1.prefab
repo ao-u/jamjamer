@@ -173,7 +173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d80b2412b6f3c864587acd92e76d09bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  index: pickup
+  baseRot: {x: 0, y: 0, z: 0, w: 0}
+  index: pickupflesh
   pickedup: 0
 --- !u!54 &1977919029970221174
 Rigidbody:
