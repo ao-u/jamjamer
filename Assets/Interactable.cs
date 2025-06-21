@@ -270,7 +270,7 @@ public class Interactable : MonoBehaviour
                 break;
             case "menuplay":
                 soundeffect = "selectyes";
-                Menu.Play();
+                StartCoroutine(GameObject.Find("Main Camera").GetComponent<Menu>().Play());
                 break;
             case "menuquit":
                 soundeffect = "selectno";

@@ -297,7 +297,7 @@ public class Player : MonoBehaviour
     {
         if (other.transform.name == "FEED")
         {
-            Director.Death();
+            StartCoroutine(Director.FadeOut());
         }
     }
 }

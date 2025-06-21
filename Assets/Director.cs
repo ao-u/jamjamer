@@ -33,6 +33,8 @@ public class Director : MonoBehaviour
         aud = player.GetComponent<AudioSource>();
         quotatier = 1;
         CalculateQuota();
+
+        StartCoroutine(FadeIn());
     }
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
@@ -46,7 +48,35 @@ public class Director : MonoBehaviour
             Graphics.Blit(source, destination);
         }
     }
-
+    public static IEnumerator FadeIn()
+    {
+        GameObject fader = GameObject.Find("transition");
+        if (fader != null)
+        {
+            Image img = fader.GetComponent<Image>();
+            img.color = new Color(1, 1, 1, 1);
+            while (img.color.a > 0f)
+            {
+                img.color = new Color(1, 1, 1, img.color.a - Time.fixedDeltaTime * 2f);
+                yield return new WaitForFixedUpdate();
+            }
+        }
+    }
+    public static IEnumerator FadeOut()
+    {
+        GameObject fader = GameObject.Find("transition");
+        if (fader != null)
+        {
+            Image img = fader.GetComponent<Image>();
+            img.color = new Color(1, 1, 1, 0);
+            while (img.color.a < 1f)
+            {
+                img.color = new Color(1, 1, 1, img.color.a + Time.fixedDeltaTime * 2f);
+                yield return new WaitForFixedUpdate();
+            }
+        }
+        SceneManager.LoadScene("menu");
+    }
     void Update()
     {
         if (Input.GetKey(KeyCode.J)) { Time.timeScale = 3f; } else { Time.timeScale = 1f; }
@@ -108,9 +138,9 @@ public class Director : MonoBehaviour
         Director.LogConst("Time : " + globaltimer.ToString("#.00"), "Time", Color.white);
     }
 
-    public static void Death()
+    public void Death()
     {
-        SceneManager.LoadScene("menu");
+        StartCoroutine(FadeOut());
     }
     public static void CalculateQuota()
     {

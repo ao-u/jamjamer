@@ -1,18 +1,32 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
     {
-
+        StartCoroutine(FadeIn());
     }
-    public static void Play()
+    public IEnumerator Play()
     {
+        GameObject fader = GameObject.Find("transition");
+        if (fader != null)
+        {
+            
+            Image img = fader.GetComponent<Image>();
+            img.color = new Color(1, 1, 1, 0);
+            while (img.color.a < 1f)
+            {
+                img.color = new Color(1, 1, 1, img.color.a + Time.fixedDeltaTime * 2f);
+                yield return new WaitForFixedUpdate();
+            }
+        }
         SceneManager.LoadScene("game");
         Director.logsconst.Clear();
         Director.logstemp.Clear();
@@ -23,11 +37,29 @@ public class Menu : MonoBehaviour
         MapGen.count = 0;
         MapGen.localroomcount = 0;
         MapGen.allrooms.Clear();
+        //GameObject.Find("Main Camera").GetComponent<Director>().StartCoroutine(Director.FadeIn());
+        
+    }
+    public static IEnumerator FadeIn()
+    {
+        GameObject fader = GameObject.Find("transition");
+        if (fader != null)
+        {
+            Image img = fader.GetComponent<Image>();
+            img.color = new Color(1, 1, 1, 1);
+            while (img.color.a > 0f)
+            {
+                img.color = new Color(1, 1, 1, img.color.a - Time.fixedDeltaTime * 2f);
+                yield return new WaitForFixedUpdate();
+            }
+        }
     }
     public static void Quit()
     {
-
+        Application.Quit();
     }
+
+
     void Update()
     {
         Cursor.lockState = CursorLockMode.None;
