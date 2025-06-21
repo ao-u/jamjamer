@@ -14,10 +14,12 @@ using static UnityEngine.GraphicsBuffer;
 public class Director : MonoBehaviour
 {
     public static GameObject player, canvas, maincamera, layeredcamera;
-    GameObject map, fleshtimerUI;
+    static GameObject fleshtimerUI;
     public Material mattt;
     public static AudioSource aud;
     public static float gravity = 30f;
+
+    public static bool showdebugstuff = false;
     public static void ApplyGravity(Rigidbody rb)
     {
         rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y - gravity * Time.fixedDeltaTime, rb.velocity.z);
@@ -62,8 +64,35 @@ public class Director : MonoBehaviour
             }
         }
     }
-    public static IEnumerator FadeOut()
+    public static IEnumerator DeathCo()
     {
+        
+        for (int j = 0; j < 15; j++)
+        {
+            string s = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789###@@@@$$$$###@@@@###";
+            string r = "";
+            for (int i = 0; i < 10; i++)
+            {
+                char c = s[Random.Range(0, s.Length)];
+                r += c + "-";
+            }
+
+            Director.LogTemp("SYSTEM_FAILURE: " + r, Color.white, 1f);
+
+
+
+            Color cc = j % 2 == 0 ? Color.white : Color.black;
+            fleshtimerUI.transform.Find("Background").GetComponent<Image>().color = cc;
+
+            fleshtimer = j % 2 == 0 ? Random.Range(4f, 24f) : Random.Range(40f, 70f);
+            fleshtimerUI.transform.Find("fa").Find("Fill").GetComponent<Image>().color = cc;
+
+
+            yield return new WaitForSeconds(.2f);
+
+
+
+        }
         GameObject fader = GameObject.Find("transition");
         if (fader != null)
         {
@@ -71,7 +100,9 @@ public class Director : MonoBehaviour
             img.color = new Color(1, 1, 1, 0);
             while (img.color.a < 1f)
             {
-                img.color = new Color(1, 1, 1, img.color.a + Time.fixedDeltaTime * 2f);
+                img.color = new Color(1, 1, 1, img.color.a + Time.fixedDeltaTime * 1f);
+
+                
                 yield return new WaitForFixedUpdate();
             }
         }
@@ -79,7 +110,8 @@ public class Director : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetKey(KeyCode.J)) { Time.timeScale = 3f; } else { Time.timeScale = 1f; }
+        //if (Input.GetKey(KeyCode.J)) { Time.timeScale = 3f; } else { Time.timeScale = 1f; }
+        if (Input.GetKeyDown(KeyCode.U)) { showdebugstuff = !showdebugstuff; }
     }
     public static float globaltimer = 0f;
     public static float fleshtimer = 60f;
@@ -134,13 +166,16 @@ public class Director : MonoBehaviour
         fleshtimerUI.transform.Find("fa").Find("Fill").GetComponent<Image>().color =
             Color.Lerp(Color.white, Color.black, (fleshtimer - 80f) / 100f);
 
-
+        if (showdebugstuff)
         Director.LogConst("Time : " + globaltimer.ToString("#.00"), "Time", Color.white);
     }
-
+    public static bool dying = false;
     public void Death()
     {
-        StartCoroutine(FadeOut());
+        if (dying) return;
+        dying = true;
+        //Director.LogTemp("You died!", Color.white, 2f);
+        StartCoroutine(DeathCo());
     }
     public static void CalculateQuota()
     {

@@ -34,6 +34,7 @@ public class Menu : MonoBehaviour
         Director.quotaprogress = 0;
         Director.quotatier = 1;
         Director.fleshtimer = 60f;
+        Director.dying = false;
         MapGen.count = 0;
         MapGen.localroomcount = 0;
         MapGen.allrooms.Clear();

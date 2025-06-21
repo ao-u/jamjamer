@@ -52,13 +52,21 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         fpstimer -= Time.fixedDeltaTime;
-        if (fpstimer < 0f) { 
+        if (fpstimer < 0f && Director.showdebugstuff) { 
         Director.LogConst("FPS : " + (1.0f / realdeltatime).ToString("#.00"), "FPS", Color.white);
         fpstimer = .2f; }
 
-        Movement();
+        if (!Director.dying)
+        {
+            Movement();
 
-        InteractableController();
+            InteractableController();
+        }
+        else
+        {
+            
+        }
+        
     }
     private void LateUpdate()
     {
@@ -228,8 +236,11 @@ public class Player : MonoBehaviour
 
         
 
-
-        Director.LogConst("Velocity : " + velnoy.magnitude.ToString("#.00"), "velnoy", Color.white);
+        if (Director.showdebugstuff)
+        {
+            Director.LogConst("Velocity : " + velnoy.magnitude.ToString("#.00"), "velnoy", Color.white);
+        }
+        
 
 
         RaycastHit rayhit;
@@ -256,7 +267,7 @@ public class Player : MonoBehaviour
     }
 
     public static List<GameObject> helditems = new List<GameObject>();
-    float speedmult;
+    public float speedmult;
     void InteractableController()
     {
 
@@ -297,7 +308,7 @@ public class Player : MonoBehaviour
     {
         if (other.transform.name == "FEED")
         {
-            StartCoroutine(Director.FadeOut());
+            GameObject.Find("Main Camera").GetComponent<Director>().Death();
         }
     }
 }
