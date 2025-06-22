@@ -114,6 +114,7 @@ public class Director : MonoBehaviour
                 yield return new WaitForFixedUpdate();
             }
         }
+        Menu.hasplayedonetime = true;
         SceneManager.LoadScene("menu");
     }
     void Update()
@@ -122,7 +123,7 @@ public class Director : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.U)) { showdebugstuff = !showdebugstuff; }
     }
     public static float globaltimer = 0f;
-    public static float fleshtimer = 60f;
+    public static float fleshtimer = 80f;
     public static float fleshtimerpaused = -1f;
 
     public static int quotaprogress = 0;

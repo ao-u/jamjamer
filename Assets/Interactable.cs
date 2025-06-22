@@ -123,12 +123,16 @@ public class Interactable : MonoBehaviour
                     }
                     
                 }
-                
+                Director.LogTemp("QUOTA_TIER_" + Director.quotatier + " completed in " + Director.globaltimer, Color.white, 2f);
+                Menu.besttimes[Director.quotatier] = Mathf.Min(Menu.besttimes[Director.quotatier], Director.globaltimer);
 
-                Director.LogTemp("QUOTA_MET", Color.white, 3f);
+
+                //Director.LogTemp("QUOTA_MET", Color.white, 3f);
                 Director.quotaprogress = 0;
                 Director.quotatier++;
                 Director.CalculateQuota();
+
+                
             }
         }
     }

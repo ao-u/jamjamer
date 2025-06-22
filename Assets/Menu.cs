@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,9 +10,39 @@ using UnityEngine.UI;
 public class Menu : MonoBehaviour
 {
     // Start is called before the first frame update
+    public static Dictionary<int, float> besttimes = new Dictionary<int, float>
+    {
+        { 1, 9999f },
+        { 2, 9999f },
+        { 3, 9999f },
+        { 4, 9999f },
+    };
+    public static bool hasplayedonetime = false; 
+    GameObject timesobject;
     void Start()
     {
+        timesobject = GameObject.Find("times");
         Cursor.lockState = CursorLockMode.None;
+
+        string s = "-BEST_TIMES-\n";
+        for (int i = 0; i < besttimes.Count; i++)
+        {
+            if (besttimes[i + 1] >= 9990f)
+            {
+                s += "";
+            }
+            else
+            {
+                s += "Q" + (i + 1) + ": " + besttimes[i + 1].ToString("#.00") + "s\n";
+            }
+                
+        }
+        if (!hasplayedonetime)
+        {
+            s = "";
+        }
+        timesobject.GetComponent<TextMeshPro>().text = s;
+
         StartCoroutine(FadeIn());
     }
     public IEnumerator Play()
@@ -34,7 +65,7 @@ public class Menu : MonoBehaviour
         Director.quota = 1;
         Director.quotaprogress = 0;
         Director.quotatier = 1;
-        Director.fleshtimer = 60f;
+        Director.fleshtimer = 80f;
         Director.dying = false;
         Director.globaltimer = 0f;
         Player.helditems.Clear();
@@ -44,7 +75,9 @@ public class Menu : MonoBehaviour
         MapGen.count = 0;
         MapGen.localroomcount = 0;
         MapGen.allrooms.Clear();
-        Cursor.lockState = CursorLockMode.Locked;
+
+        
+        //Cursor.lockState = CursorLockMode.Locked;
         //GameObject.Find("Main Camera").GetComponent<Director>().StartCoroutine(Director.FadeIn());
 
     }

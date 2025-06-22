@@ -17,24 +17,31 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+
+        speed = basespeed;
+        maxspeed = basemaxspeed;
+
+
         ori = transform.Find("ori");
         maincamera = GameObject.Find("Main Camera").transform;
         shiftUI = GameObject.Find("shiftUI");
+        lc1 = GameObject.Find("LayeredCamera");
+        lc2 = GameObject.Find("LayeredCamera2");
+        canvasholder = GameObject.Find("CameraCanvasHolder");
         rb = GetComponent<Rigidbody>();
         aud = GetComponent<AudioSource>();
         rb.freezeRotation = true;
         rb.useGravity = false;
 
-        Cursor.lockState = CursorLockMode.Locked;
-
-        speed = basespeed;
-        maxspeed = basemaxspeed;
+        
     }
     
     void Update()
     {
         GetInput();
 
+        /*
         if (Input.GetKey(KeyCode.H))
         {
             Application.targetFrameRate = 30;
@@ -43,8 +50,11 @@ public class Player : MonoBehaviour
         {
             Application.targetFrameRate = 300;
         }
-        
-
+        */
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            maincamera.GetComponent<Director>().Death();
+        }
         realdeltatime = Time.deltaTime;
     }
     float realdeltatime;
@@ -67,11 +77,26 @@ public class Player : MonoBehaviour
             rb.velocity = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)) * 10f;
         }
         
+        
+    }
+    void UIStuff()
+    {
+        //Im gonna HURT POEPLE IM GONNA HURT PEOPLE WHY CANT I LERP IN UPDATE WHY CANT I LERP IN UPDATE WHY WHYW HY WHYW HYW HY IVE TRIDEE EVERYTHING
+        float lerpvalue = .97f;
+        lerpvalue /= 1f + Time.deltaTime;
+        float lerpvalue2 = .94f;
+        lerpvalue2 /= 1f + Time.deltaTime;
+        canvasholder.transform.position = Vector3.Lerp(canvasholder.transform.position, maincamera.position, lerpvalue);
+        canvasholder.transform.rotation = Quaternion.Slerp(canvasholder.transform.rotation, maincamera.rotation, lerpvalue2);
+        lc2.transform.position = maincamera.position;
+        lc2.transform.rotation = maincamera.rotation;
     }
     private void LateUpdate()
     {
         Camera();
+        //UIStuff();
     }
+    GameObject lc1, lc2, canvasholder;
     void Camera()
     {
         Quaternion targetcamerarot;
@@ -85,7 +110,7 @@ public class Player : MonoBehaviour
         float amount = touchingsurface ? 1.5f : 1f;
        // amount *= shift ? 3f : 1f;
         targetcamerarot = Quaternion.Euler(new Vector3(targetcamerarot.eulerAngles.x, targetcamerarot.eulerAngles.y, -horizontal * amount));
-        maincamera.position = transform.position + new Vector3(0f, .75f, 0f);
+        maincamera.position = transform.position + new Vector3(0f, playerheight / 2f - 2f, 0f);
 
         maincamera.rotation = Quaternion.Euler(
                 new Vector3(targetcamerarot.eulerAngles.x,
@@ -94,8 +119,12 @@ public class Player : MonoBehaviour
         float offsety = (Mathf.Sin(Time.fixedTime * 2f) / 4000f);
         float offsetx = (Mathf.Sin(Time.fixedTime * 3f) / 6000f);
 
-        maincamera.eulerAngles += new Vector3(offsetx, 0f, offsety);
+        Vector3 offsetvector = new Vector3(offsetx, 0f, offsety);
+        maincamera.eulerAngles += offsetvector;
 
+        //lc2.transform.eulerAngles += offsetvector;
+        
+        //lc2.transform.rotation = Quaternion.Slerp(lc1.transform.rotation, Quaternion.identity, .2f);
         //Director.layeredcamera.transform.rotation = Quaternion.Slerp(Director.layeredcamera.transform.rotation, maincamera.rotation, .2f);
     }
     public static float mousex, mousey;
@@ -137,8 +166,8 @@ public class Player : MonoBehaviour
     public static Vector3 vel;
     public static bool touchingsurface;
     Vector3 point;
-    const float playerheight = 11f; 
-    const float playerradius = 1.9f;
+    const float playerheight = 7.5f; 
+    const float playerradius = 2.1f;
 
     private void OnDrawGizmos()
     {
@@ -158,7 +187,7 @@ public class Player : MonoBehaviour
         
 
         //FS
-        if (transform.position.y < -100f) transform.position = new Vector3(0, 10, 0);
+        //if (transform.position.y < -9999f) transform.position = new Vector3(0, 10, 0);
 
         Vector3 r = rb.velocity;
 
@@ -167,17 +196,16 @@ public class Player : MonoBehaviour
 
         //base speed
 
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            GameObject g = Instantiate(Resources.Load<GameObject>("prefabs/item3"), transform.position, transform.rotation);
-        }
+        
+            //GameObject g = Instantiate(Resources.Load<GameObject>("prefabs/item3"), transform.position, transform.rotation);
+        
 
 
 
         //get closest point to butt sphere of player
         Vector3 spherepos = transform.position - new Vector3(0, playerheight / 2 - playerradius, 0f);
         Collider[] c = Physics.OverlapSphere(spherepos, playerradius, LayerMask.GetMask("Default"));
-        Vector3 closestpoint = new Vector3(99999f, 99999f, 99999f);
+        Vector3 closestpoint = new Vector3(123456f, 99999f, 99999f);
         foreach (Collider cc in c)
         {
             if (!cc.isTrigger)
@@ -187,7 +215,7 @@ public class Player : MonoBehaviour
             }
         }
         point = closestpoint;
-        touchingsurface = point.magnitude < 999f;
+        touchingsurface = point.x != 123456f;
 
         shifttimer -=  ( touchingsurface ? Time.fixedDeltaTime * .2f : Time.fixedDeltaTime * .5f ) * scrapDASHCD;
         shiftUI.GetComponent<Slider>().maxValue = shiftmax;
@@ -212,6 +240,17 @@ public class Player : MonoBehaviour
         Vector3 wishdir = ori.forward * vertical + ori.right * horizontal;
         wishdir = wishdir.normalized;
 
+        
+        if (touchingsurface)
+        {
+            Vector3 surfaceNormal = (spherepos - point).normalized;
+            if (Vector3.Dot(wishdir, surfaceNormal) < 0f)
+            {
+                wishdir = Vector3.ProjectOnPlane(wishdir, surfaceNormal);
+            }
+                
+        }
+        
         Vector3 velnoy = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
         /*
         velnoy *= touchingsurface ? .95f : .99f;
@@ -280,7 +319,7 @@ public class Player : MonoBehaviour
 
         throwtimer -= Time.fixedDeltaTime;
 
-        float heavyness = 1f + (helditems.Count * ((.3f) / scrapSTRENGTH));
+        float heavyness = 1f + (helditems.Count * ((.1f) / scrapSTRENGTH));
         speedmult = 1f / heavyness;
 
         speedmult *= scrapSPEED;

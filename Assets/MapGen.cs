@@ -60,7 +60,7 @@ public class MapGen : MonoBehaviour
             Director.LogTemp("NO ROOM SPAWNER IDIOT ??", Color.red, 1f);
         }
         GameObject spawner = GameObject.Find("spawnRoom");
-        GameObject rprefab = Resources.Load<GameObject>("prefabs/room" + Random.Range(1, 4));
+        GameObject rprefab = Resources.Load<GameObject>("prefabs/room" + Random.Range(1, 5));
         if (first || localroomcount > Random.Range(6, 8))
         {
             rprefab = Resources.Load<GameObject>("prefabs/mainRoom");
@@ -100,6 +100,8 @@ public class MapGen : MonoBehaviour
             {
                 GameObject itempref = Resources.Load<GameObject>("prefabs/item" + Random.Range(1, 5));
                 GameObject item = Instantiate(itempref, c.position, c.rotation);
+                float ff = .3f;
+                item.transform.position += new Vector3(Random.Range(-ff, ff), 0f, Random.Range(-ff, ff));
             }
         }
         

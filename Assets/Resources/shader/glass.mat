@@ -44,7 +44,7 @@ Material:
     m_Floats:
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _alpha: 0.57
+    - _alpha: 0.84
     - _tiler: 0.04
     m_Colors: []
   m_BuildTextureStacks: []
