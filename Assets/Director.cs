@@ -121,6 +121,25 @@ public class Director : MonoBehaviour
     {
         //if (Input.GetKey(KeyCode.J)) { Time.timeScale = 3f; } else { Time.timeScale = 1f; }
         if (Input.GetKeyDown(KeyCode.U)) { showdebugstuff = !showdebugstuff; }
+        StupiderUpdate();
+    }
+
+    bool paused = false;
+    void StupiderUpdate()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
+        {
+            paused = !paused;
+        }
+
+        if (paused)
+        {
+
+        }
+        else
+        {
+
+        }
     }
     public static float globaltimer = 0f;
     public static float fleshtimer = 80f;

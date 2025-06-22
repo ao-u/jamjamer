@@ -4,6 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class Interactable : MonoBehaviour
 {
@@ -81,8 +82,19 @@ public class Interactable : MonoBehaviour
         float lerpvalue = 0.3f;
         Quaternion targetrot;
         Vector3 targetscale;
+        if (index == "pickuptech")
+        {
+            Vector3 dir = (GameObject.Find("player").transform.position - transform.position).normalized;
+            baseRot = Quaternion.LookRotation(dir);
+            if (pickedup)
+            {
+                baseRot = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+            }
+        }
         if (hoveringtimer > 0.1f)
         {
+            
+           
             targetscale = baseScale * 1.1f;
             transform.localScale = Vector3.Lerp(transform.localScale, targetscale, lerpvalue);
 
@@ -222,6 +234,34 @@ public class Interactable : MonoBehaviour
         string soundeffect = "selectno";
         switch (s)
         {
+            case "SENSUP":
+                if (Player.sensmult >= 1.8f)
+                {
+                    return;
+                }
+                else
+                {
+                    Player.sensmult += 0.1f;
+                    Player.UpdateSensSliderThing();
+                    soundeffect = "selectyes";
+                }
+                
+                break;
+            case "SENSDOWN":
+                if (Player.sensmult <= 0.2f)
+                {
+                    return;
+                }
+                else
+                {
+                    Player.sensmult -= 0.1f;
+                    Player.UpdateSensSliderThing();
+                    soundeffect = "selectyes";
+                }
+                    
+                break;
+
+
             case "lock":
                 Director.LogTemp("You have not met the quota.", Color.white, 3f);
                 break;

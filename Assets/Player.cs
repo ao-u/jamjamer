@@ -10,7 +10,8 @@ public class Player : MonoBehaviour
 {
     Rigidbody rb;
     Vector2 rotation = Vector2.zero;
-    Vector2 sens = new Vector2(3f, 2f);
+    Vector2 sens = new Vector2(1.5f, 1f);
+    public static float sensmult = 1f;
     Transform maincamera;
     Transform ori;
     public static AudioSource aud;
@@ -34,9 +35,16 @@ public class Player : MonoBehaviour
         rb.freezeRotation = true;
         rb.useGravity = false;
 
+
+        UpdateSensSliderThing();
         
     }
-    
+    public static void UpdateSensSliderThing()
+    {
+        GameObject g = GameObject.Find("sensslider");
+        float multaspos = (-1f + Player.sensmult) * 3.5f;
+        g.transform.localPosition = new Vector3(g.transform.localPosition.x, g.transform.localPosition.y, multaspos);
+    }
     void Update()
     {
         GetInput();
@@ -55,6 +63,7 @@ public class Player : MonoBehaviour
         {
             maincamera.GetComponent<Director>().Death();
         }
+        sens = new Vector2(1.5f, 1f) * sensmult;
         realdeltatime = Time.deltaTime;
     }
     float realdeltatime;
