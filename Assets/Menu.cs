@@ -11,6 +11,7 @@ public class Menu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.lockState = CursorLockMode.None;
         StartCoroutine(FadeIn());
     }
     public IEnumerator Play()
@@ -35,11 +36,17 @@ public class Menu : MonoBehaviour
         Director.quotatier = 1;
         Director.fleshtimer = 60f;
         Director.dying = false;
+        Director.globaltimer = 0f;
+        Player.helditems.Clear();
+        Player.scrapDASHCD = 1f;
+        Player.scrapSPEED= 1f;
+        Player.scrapSTRENGTH= 1f;
         MapGen.count = 0;
         MapGen.localroomcount = 0;
         MapGen.allrooms.Clear();
+        Cursor.lockState = CursorLockMode.Locked;
         //GameObject.Find("Main Camera").GetComponent<Director>().StartCoroutine(Director.FadeIn());
-        
+
     }
     public static IEnumerator FadeIn()
     {
@@ -63,7 +70,7 @@ public class Menu : MonoBehaviour
 
     void Update()
     {
-        Cursor.lockState = CursorLockMode.None;
+        
 
         float leftclick = (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.E)) ? 1f : -1f;
         RaycastHit rayhit;

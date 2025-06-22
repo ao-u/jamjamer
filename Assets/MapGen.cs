@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
-using UnityEditor.ShaderGraph.Drawing;
 using UnityEngine;
 
 public class MapGen : MonoBehaviour
@@ -37,6 +36,16 @@ public class MapGen : MonoBehaviour
         count++;
         allrooms.Add(hw);
         Destroy(spawner);
+
+
+        foreach (Transform c in hw.transform)
+        {
+            SpawnItem(c);
+            foreach (Transform cc in c)
+            {
+                SpawnItem(cc);
+            }
+        }
     }
     public static void GenRoom(bool first)
     {
@@ -72,17 +81,23 @@ public class MapGen : MonoBehaviour
 
         foreach (Transform c in r.transform)
         {
-            //Debug.Log(c.name.ToString());
-            if (c.tag == "itemspawnpoint")
+            SpawnItem(c);
+            foreach (Transform cc in c)
             {
-                if (Random.value < .9f) 
-                {
-                    GameObject itempref = Resources.Load<GameObject>("prefabs/item" + Random.Range(1, 5));
-                    GameObject item = Instantiate(itempref, c.position, c.rotation);
-                }
-                
+                SpawnItem(cc);
             }
-
         }
+    }
+    static void SpawnItem(Transform c)
+    {
+        if (c.tag == "itemspawnpoint")
+        {
+            if (Random.value < .7f)
+            {
+                GameObject itempref = Resources.Load<GameObject>("prefabs/item" + Random.Range(1, 5));
+                GameObject item = Instantiate(itempref, c.position, c.rotation);
+            }
+        }
+        
     }
 }

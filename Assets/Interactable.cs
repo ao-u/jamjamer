@@ -115,13 +115,31 @@ public class Interactable : MonoBehaviour
             if (Director.quotaprogress >= Director.quota)
             {
                 if (GameObject.Find("quotaBlock") != null)
-                Destroy(GameObject.Find("quotaBlock"));
+                {
+                    if (!openingdoor)
+                    {
+                        openingdoor = true;
+                        StartCoroutine(openDoor());
+                    }
+                    
+                }
+                
 
                 Director.LogTemp("QUOTA_MET", Color.white, 3f);
                 Director.quotaprogress = 0;
                 Director.quotatier++;
                 Director.CalculateQuota();
             }
+        }
+    }
+    bool openingdoor = false;
+    IEnumerator openDoor()
+    {
+        GameObject g = GameObject.Find("quotaBlock");
+        for (int i = 0; i < 22; i++)
+        {
+            g.transform.position += new Vector3(0f, 1f, 0f);
+            yield return new WaitForFixedUpdate();
         }
     }
     void Update()
@@ -175,21 +193,23 @@ public class Interactable : MonoBehaviour
     public void Throw()
     {
         if (pickuptimer > 0f) return;
+        Player.helditems.Remove(gameObject);
+        pickedup = false;
+        pickuptimer = 0.2f;
         transform.parent = Director.maincamera.transform;
         transform.localPosition = new Vector3(0f, -2f, 5f);
         transform.parent = null;
         transform.gameObject.layer = LayerMask.NameToLayer("Default");
-        pickedup = false;
-        pickuptimer = 0.2f;
+        
 
 
 
         if (rb != null)
         {
             rb.velocity += Director.player.GetComponent<Rigidbody>().velocity * .7f;
-            rb.velocity += Director.maincamera.transform.rotation * Vector3.forward * 4f;
+            rb.velocity += Director.maincamera.transform.forward * 30f;
         }
-        Player.helditems.Remove(gameObject);
+        
     }
 
     float value = 0f;
@@ -202,26 +222,20 @@ public class Interactable : MonoBehaviour
                 Director.LogTemp("You have not met the quota.", Color.white, 3f);
                 break;
             case "quota":
-                Color c = new Color(138f, 74f, 82f);
+                Color c = Color.white;
+                if (Director.globaltimer > 100f)
+                {
+                    Director.LogTemp("If you cant meet the quota, feed the machine your own " + Director.C("FLESH", Color.red), c, 3f);
+                }
+                else
+                {
+                    Color cc = new Color(.6f, .2f, .2f);
+                    Director.LogTemp("Feed the machine " + Director.C("SCRAP", cc) + " to meet your quota.", c, 3f);
+                }
 
-                
 
-                if (value < 1f)
-                {
-                    Director.LogTemp("Your quota must be reached within your feeble lifespan", c, 3f);
-                    value = 1.5f;
-                }
-                else if (value < 2f)
-                {
-                    Director.LogTemp("Feed the machine " + Director.C("SCRAP", Color.green) + " to meet your quota.", c, 3f);
-                    value = 2.5f;
-                }
-                else if (value < 3f)
-                {
-                    Director.LogTemp("Feed the machine " + Director.C("FLESH", Color.red) + " in order to live longer.", c, 3f);
-                    value = 0f;
-                }
-                break;
+
+                    break;
             case "roomspawner":
                 soundeffect = "selectyes";
                 if (GameObject.Find("spawnRoom") != null)
@@ -301,6 +315,26 @@ public class Interactable : MonoBehaviour
             if (index == "pickuptech")
             {
                 Director.quotaprogress += 1;
+                float r = Random.value;
+                Color cc = new Color(.6f, .2f, .2f);
+                if (r > .8f) {
+                    Player.scrapSPEED += 0.1f;
+                    Director.LogTemp("+" + Director.C("SPEED", Color.blue) + " from " + Director.C("SCRAP", cc) + "!", Color.white, 2f);
+                }
+                else if (r > .40f)
+                {
+                    Player.scrapSTRENGTH+= 0.2f;
+                    Director.LogTemp("+" + Director.C("STRENGTH", Color.red) + " from " + Director.C("SCRAP", cc) + "!", Color.white, 2f);
+                }
+                else if (r > .2f)
+                {
+                    Player.scrapDASHCD+= 0.1f;
+                    Director.LogTemp("+" + Director.C("DASH", Color.green) + " from " + Director.C("SCRAP", cc) + "!", Color.white, 2f);
+                }
+                else
+                {
+
+                }
             }
 
 

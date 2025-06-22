@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            
+            rb.velocity = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)) * 10f;
         }
         
     }
@@ -126,6 +126,9 @@ public class Player : MonoBehaviour
     
     float jumpforce = 15f;
 
+    public static float scrapSPEED = 1f;
+    public static float scrapSTRENGTH = 1f;
+    public static float scrapDASHCD = 1f;
 
     float jumptimer = -1f;
     float shifttimer = -1f;
@@ -164,8 +167,11 @@ public class Player : MonoBehaviour
 
         //base speed
 
-        
-        
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            GameObject g = Instantiate(Resources.Load<GameObject>("prefabs/item3"), transform.position, transform.rotation);
+        }
+
 
 
         //get closest point to butt sphere of player
@@ -183,7 +189,7 @@ public class Player : MonoBehaviour
         point = closestpoint;
         touchingsurface = point.magnitude < 999f;
 
-        shifttimer -= touchingsurface ? Time.fixedDeltaTime * .2f : Time.fixedDeltaTime * .5f;
+        shifttimer -=  ( touchingsurface ? Time.fixedDeltaTime * .2f : Time.fixedDeltaTime * .5f ) * scrapDASHCD;
         shiftUI.GetComponent<Slider>().maxValue = shiftmax;
         shiftUI.GetComponent<Slider>().value = shiftmax - shifttimer;
 
@@ -239,6 +245,7 @@ public class Player : MonoBehaviour
         if (Director.showdebugstuff)
         {
             Director.LogConst("Velocity : " + velnoy.magnitude.ToString("#.00"), "velnoy", Color.white);
+            Director.LogConst("STR:" + scrapSTRENGTH + " SPD:" + scrapSPEED + " DCD:" + scrapDASHCD, "stats", Color.white);
         }
         
 
@@ -273,7 +280,11 @@ public class Player : MonoBehaviour
 
         throwtimer -= Time.fixedDeltaTime;
 
-        speedmult = (helditems.Count > 0 ? 1f - helditems.Count * .1f : 1f);
+        float heavyness = 1f + (helditems.Count * ((.3f) / scrapSTRENGTH));
+        speedmult = 1f / heavyness;
+
+        speedmult *= scrapSPEED;
+
         speed = basespeed * speedmult;
         maxspeed = basemaxspeed * speedmult;
 
@@ -281,7 +292,7 @@ public class Player : MonoBehaviour
         {
             int ia = helditems.Count - i - 1;
             helditems[i].transform.localPosition = new Vector3(2f + ia * 3f, -2f - ia, 6f + ia * 3f);
-            helditems[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+            helditems[i].GetComponent<Rigidbody>().velocity *=.95f;
             helditems[i].GetComponent<Interactable>().baseRot = Quaternion.Euler(0f, 0f, 0f);
         }
 

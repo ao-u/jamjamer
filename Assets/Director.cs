@@ -8,8 +8,8 @@ using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEditor.Searcher.SearcherWindow.Alignment;
 using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.Rendering.DebugUI;
 
 public class Director : MonoBehaviour
 {
@@ -26,7 +26,7 @@ public class Director : MonoBehaviour
     }
     void Awake()
     {
-        canvas = GameObject.Find("Canvas");
+        canvas = GameObject.Find("CameraCanvas");
         player = GameObject.Find("player");
         maincamera = gameObject;
         layeredcamera = GameObject.Find("LayeredCamera");
@@ -63,6 +63,14 @@ public class Director : MonoBehaviour
                 yield return new WaitForFixedUpdate();
             }
         }
+
+        Color c = Color.white;
+        Director.LogTemp("Your quota must be reached within your feeble lifespan", c, 3f);
+        yield return new WaitForSeconds(3f);
+        Color cc = new Color(.6f, .2f, .2f);
+        Director.LogTemp("Feed the machine " + Director.C("SCRAP", cc) + " to meet your quota.", c, 3f);
+        yield return new WaitForSeconds(3f);
+        Director.LogTemp("Feed the machine " + Director.C("FLESH", Color.red) + " in order to live longer.", c, 3f);
     }
     public static IEnumerator DeathCo()
     {
@@ -130,6 +138,14 @@ public class Director : MonoBehaviour
     {
         globaltimer += Time.fixedDeltaTime;
 
+
+        if (fleshtimer < 30f)
+        {
+            float tt = Mathf.Sin(globaltimer * 3f) * 0.5f + 0.5f;
+            Color c = new Color(1f, tt, tt, .7f);
+            fleshtimerUI.transform.Find("Background").GetComponent<Image>().color = c;
+        }
+
         fleshtimerpaused -= Time.fixedDeltaTime;
         if (fleshtimerpaused > 0f)
         {
@@ -143,12 +159,7 @@ public class Director : MonoBehaviour
             fleshtimer -= Time.fixedDeltaTime;
         }
 
-        if (fleshtimer < 30f)
-        {
-            float tt = Mathf.Sin(globaltimer * 3f) * 0.5f + 0.5f;
-            Color c = new Color(1f, tt, tt, .7f);
-            fleshtimerUI.transform.Find("Background").GetComponent<Image>().color = c;
-        }
+        
 
         if (GameObject.Find("quotaText") != null)
         {
@@ -167,7 +178,11 @@ public class Director : MonoBehaviour
             Color.Lerp(Color.white, Color.black, (fleshtimer - 80f) / 100f);
 
         if (showdebugstuff)
-        Director.LogConst("Time : " + globaltimer.ToString("#.00"), "Time", Color.white);
+        {
+            Director.LogConst("Time : " + globaltimer.ToString("#.00"), "Time", Color.white);
+            Director.LogConst("SC" + Screen.width + "/" + Screen.height, "SC", Color.white);
+        }
+        
     }
     public static bool dying = false;
     public void Death()
@@ -197,7 +212,7 @@ public class Director : MonoBehaviour
         l.logitself.GetComponent<TextMeshProUGUI>().color = color;
         l.logitself.GetComponent<RectTransform>().anchorMin = new Vector2(.5f, .5f);
         l.logitself.GetComponent<RectTransform>().anchorMax = new Vector2(.5f, .5f);
-        l.logitself.GetComponent<RectTransform>().anchoredPosition = new Vector2(9999f, -9999f);
+        //l.logitself.GetComponent<RectTransform>().anchoredPosition = new Vector2(9999f, -9999f);
         l.timer = timer;
         logstemp.Add(l);
     }
@@ -228,7 +243,9 @@ public class Director : MonoBehaviour
         for (int i = 0; i < logstemp.Count; i++)
         {
             RectTransform r = logstemp[i].logitself.GetComponent<RectTransform>();
-            r.anchoredPosition = new Vector2(0f, (-200f - 60f * (logstemp.Count - i + 1)) * (Screen.height / 1080f));
+            r.anchoredPosition3D = new Vector3(0f, (-150f - 60f * (logstemp.Count - i + 1)), 0f);
+            r.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
+
 
             logstemp[i].timer -= Time.fixedDeltaTime;
             Color c = logstemp[i].logitself.GetComponent<TextMeshProUGUI>().color;
@@ -244,8 +261,8 @@ public class Director : MonoBehaviour
         for (int i = 0; i < logsconst.Count; i++) 
         {
             RectTransform r = logsconst[i].logitself.GetComponent<RectTransform>();
-            r.anchoredPosition = new Vector2(-500f * (Screen.width / 1920f), 
-                -40f * (logsconst.Count - i + 1) * (Screen.height / 1080f));
+            r.anchoredPosition3D = new Vector3(-500f ,  -40f * (logsconst.Count - i + 1), 0f );
+            r.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
 
             logsconst[i].timer -= Time.fixedDeltaTime;
 
