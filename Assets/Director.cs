@@ -65,10 +65,10 @@ public class Director : MonoBehaviour
         }
 
         Color c = Color.white;
-        Director.LogTemp("Your quota must be reached within your feeble lifespan", c, 5f);
+        Director.LogTemp("Your " + Director.C("QUOTA", Color.magenta) + " must be reached within your feeble lifespan.", c, 5f);
         yield return new WaitForSeconds(3f);
         Color cc = new Color(.6f, .2f, .2f);
-        Director.LogTemp("Feed the machine " + Director.C("SCRAP", cc) + " to meet your quota.", c, 5f);
+        Director.LogTemp("Feed the machine " + Director.C("SCRAP", cc) + " to meet your " + Director.C("QUOTA", Color.magenta) + ".", c, 5f);
         yield return new WaitForSeconds(3f);
         Director.LogTemp("Feed the machine " + Director.C("FLESH", Color.red) + " in order to live longer.", c, 5f);
     }

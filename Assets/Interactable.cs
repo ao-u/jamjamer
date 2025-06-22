@@ -135,8 +135,19 @@ public class Interactable : MonoBehaviour
                     }
                     
                 }
-                Director.LogTemp("QUOTA_TIER_" + Director.quotatier + " completed in " + Director.globaltimer, Color.white, 2f);
-                Menu.besttimes[Director.quotatier] = Mathf.Min(Menu.besttimes[Director.quotatier], Director.globaltimer);
+                if (Director.quotatier > 1)
+                {
+                    Director.LogTemp(Director.C("QUOTA", Color.magenta) + "_TIER_" + Director.quotatier + " completed in " + Director.globaltimer, Color.white, 3f);
+                }
+                else
+                {
+                    Color cc = new Color(.6f, .2f, .2f);
+                    
+                    Director.LogTemp("Find more " + Director.C("SCRAP", cc) + " and come back to meet your next " + Director.C("QUOTA", Color.magenta), Color.white, 4f);
+                    Director.LogTemp("Congratulations!", Color.white, 4f);
+                }
+                
+                
 
 
                 //Director.LogTemp("QUOTA_MET", Color.white, 3f);
@@ -144,7 +155,7 @@ public class Interactable : MonoBehaviour
                 Director.quotatier++;
                 Director.CalculateQuota();
 
-                
+                Menu.besttimes[Director.quotatier] = Mathf.Min(Menu.besttimes[Director.quotatier], Director.globaltimer);
             }
         }
     }

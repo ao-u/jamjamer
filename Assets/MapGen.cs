@@ -30,7 +30,7 @@ public class MapGen : MonoBehaviour
             Director.LogTemp("NO HALLWAY SPAWNER IDIOT ??", Color.red, 1f);
         }
         GameObject spawner = GameObject.Find("spawnHallway");
-        GameObject hwprefab = Resources.Load<GameObject>("prefabs/hallway" + Random.Range(1, 4));
+        GameObject hwprefab = Resources.Load<GameObject>("prefabs/hallway" + Random.Range(1, 5));
         if (count < 2)
         {
             hwprefab = Resources.Load<GameObject>("prefabs/hallway2");
