@@ -65,12 +65,12 @@ public class Director : MonoBehaviour
         }
 
         Color c = Color.white;
-        Director.LogTemp("Your quota must be reached within your feeble lifespan", c, 3f);
+        Director.LogTemp("Your quota must be reached within your feeble lifespan", c, 5f);
         yield return new WaitForSeconds(3f);
         Color cc = new Color(.6f, .2f, .2f);
-        Director.LogTemp("Feed the machine " + Director.C("SCRAP", cc) + " to meet your quota.", c, 3f);
+        Director.LogTemp("Feed the machine " + Director.C("SCRAP", cc) + " to meet your quota.", c, 5f);
         yield return new WaitForSeconds(3f);
-        Director.LogTemp("Feed the machine " + Director.C("FLESH", Color.red) + " in order to live longer.", c, 3f);
+        Director.LogTemp("Feed the machine " + Director.C("FLESH", Color.red) + " in order to live longer.", c, 5f);
     }
     public static IEnumerator DeathCo()
     {
@@ -261,7 +261,7 @@ public class Director : MonoBehaviour
         for (int i = 0; i < logsconst.Count; i++) 
         {
             RectTransform r = logsconst[i].logitself.GetComponent<RectTransform>();
-            r.anchoredPosition3D = new Vector3(-500f ,  -40f * (logsconst.Count - i + 1), 0f );
+            r.anchoredPosition3D = new Vector3(-500f ,  -60f * (logsconst.Count - i + 1), 0f );
             r.localRotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
 
             logsconst[i].timer -= Time.fixedDeltaTime;

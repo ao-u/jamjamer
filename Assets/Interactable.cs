@@ -223,7 +223,7 @@ public class Interactable : MonoBehaviour
                 break;
             case "quota":
                 Color c = Color.white;
-                if (Director.globaltimer > 100f)
+                if (Director.globaltimer > 60f)
                 {
                     Director.LogTemp("If you cant meet the quota, feed the machine your own " + Director.C("FLESH", Color.red), c, 3f);
                 }
@@ -310,12 +310,13 @@ public class Interactable : MonoBehaviour
             
             if (index == "pickupflesh")
             {
-                Director.fleshtimer += 20f;
+                Director.fleshtimer += 40f;
             }
             if (index == "pickuptech")
             {
                 Director.quotaprogress += 1;
                 float r = Random.value;
+                if (Director.globaltimer < 60f) r = 0f;
                 Color cc = new Color(.6f, .2f, .2f);
                 if (r > .8f) {
                     Player.scrapSPEED += 0.1f;

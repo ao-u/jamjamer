@@ -30,7 +30,11 @@ public class MapGen : MonoBehaviour
             Director.LogTemp("NO HALLWAY SPAWNER IDIOT ??", Color.red, 1f);
         }
         GameObject spawner = GameObject.Find("spawnHallway");
-        GameObject hwprefab = Resources.Load<GameObject>("prefabs/hallway" + Random.Range(1, 3));
+        GameObject hwprefab = Resources.Load<GameObject>("prefabs/hallway" + Random.Range(1, 4));
+        if (count < 2)
+        {
+            hwprefab = Resources.Load<GameObject>("prefabs/hallway2");
+        }
         GameObject hw = Instantiate(hwprefab, spawner.transform.position, spawner.transform.rotation);
         hw.transform.name += count + "";
         count++;
@@ -56,7 +60,7 @@ public class MapGen : MonoBehaviour
             Director.LogTemp("NO ROOM SPAWNER IDIOT ??", Color.red, 1f);
         }
         GameObject spawner = GameObject.Find("spawnRoom");
-        GameObject rprefab = Resources.Load<GameObject>("prefabs/room" + Random.Range(1, 3));
+        GameObject rprefab = Resources.Load<GameObject>("prefabs/room" + Random.Range(1, 4));
         if (first || localroomcount > Random.Range(6, 8))
         {
             rprefab = Resources.Load<GameObject>("prefabs/mainRoom");
