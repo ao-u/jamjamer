@@ -137,7 +137,7 @@ public class Interactable : MonoBehaviour
                 }
                 if (Director.quotatier > 1)
                 {
-                    Director.LogTemp(Director.C("QUOTA", Color.magenta) + "_TIER_" + Director.quotatier + " completed in " + Director.globaltimer, Color.white, 3f);
+                    Director.LogTemp(Director.C("QUOTA", Color.magenta) + "_TIER_" + Director.quotatier + " completed in " + Director.globaltimer.ToString("#.00"), Color.white, 3f);
                 }
                 else
                 {
@@ -155,7 +155,7 @@ public class Interactable : MonoBehaviour
                 Director.quotatier++;
                 Director.CalculateQuota();
 
-                Menu.besttimes[Director.quotatier] = Mathf.Min(Menu.besttimes[Director.quotatier], Director.globaltimer);
+                Menu.besttimes[Director.quotatier - 1] = Mathf.Min(Menu.besttimes[Director.quotatier - 1], Director.globaltimer);
             }
         }
     }
@@ -318,7 +318,7 @@ public class Interactable : MonoBehaviour
                 break;
             case "lockeddoor":
                 soundeffect = "selectno";
-                Director.LogTemp("im locked!", Color.red, 1f);
+                Director.LogTemp("The only way is forward.", Color.red, 1f);
                 break;
             case "door":
                 soundeffect = "selectyes";
@@ -352,49 +352,62 @@ public class Interactable : MonoBehaviour
         }
         Director.PlaySound(soundeffect, aud);
     }
+
+    bool fed = false;
     private void OnTriggerEnter(Collider c)
     {
         if (c.transform.name == "FEED")
         {
-            //Director.LogTemp("consumed", Color.green, 1f);
-            Director.PlaySound("hurt", Director.aud);
-            GameObject itempref = Resources.Load<GameObject>("prefabs/item1");
-            Vector3 spawnloc = GameObject.Find("PRODUCE").transform.position;
-            GameObject g = Instantiate(itempref, spawnloc, Quaternion.identity);
-            g.transform.position += new Vector3(Random.Range(-.5f, .5f), 0f, Random.Range(-.5f, .5f));
+            if (!fed)
+            {
+                fed = true;
+                //Director.LogTemp("consumed", Color.green, 1f);
+                Director.PlaySound("hurt", Director.aud);
+                GameObject itempref = Resources.Load<GameObject>("prefabs/item1");
+                Vector3 spawnloc = GameObject.Find("PRODUCE").transform.position;
+                GameObject g = Instantiate(itempref, spawnloc, Quaternion.identity);
+                g.transform.position += new Vector3(Random.Range(-.5f, .5f), 0f, Random.Range(-.5f, .5f));
+
+                if (index == "pickupflesh")
+                {
+                    Director.fleshtimer += 40f;
+                }
+                if (index == "pickuptech")
+                {
+                    Director.quotaprogress += 1;
+                    float r = Random.value;
+                    if (Director.quotatier == 1) r = 0f;
+                    Color cc = new Color(.6f, .2f, .2f);
+                    if (r > .8f)
+                    {
+                        Player.scrapSPEED += 0.1f;
+                        Director.LogTemp("+" + Director.C("SPEED", Color.blue) + " from " + Director.C("SCRAP", cc) + "!", Color.white, 2f);
+                    }
+                    else if (r > .40f)
+                    {
+                        Player.scrapSTRENGTH += 0.2f;
+                        Director.LogTemp("+" + Director.C("STRENGTH", Color.red) + " from " + Director.C("SCRAP", cc) + "!", Color.white, 2f);
+                    }
+                    else if (r > .2f)
+                    {
+                        Player.scrapDASHCD += 0.1f;
+                        Director.LogTemp("+" + Director.C("DASH", Color.green) + " from " + Director.C("SCRAP", cc) + "!", Color.white, 2f);
+                    }
+                    else
+                    {
+
+                    }
+                }
+
+
+                Destroy(gameObject);
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
             
-            if (index == "pickupflesh")
-            {
-                Director.fleshtimer += 40f;
-            }
-            if (index == "pickuptech")
-            {
-                Director.quotaprogress += 1;
-                float r = Random.value;
-                if (Director.globaltimer < 60f) r = 0f;
-                Color cc = new Color(.6f, .2f, .2f);
-                if (r > .8f) {
-                    Player.scrapSPEED += 0.1f;
-                    Director.LogTemp("+" + Director.C("SPEED", Color.blue) + " from " + Director.C("SCRAP", cc) + "!", Color.white, 2f);
-                }
-                else if (r > .40f)
-                {
-                    Player.scrapSTRENGTH+= 0.2f;
-                    Director.LogTemp("+" + Director.C("STRENGTH", Color.red) + " from " + Director.C("SCRAP", cc) + "!", Color.white, 2f);
-                }
-                else if (r > .2f)
-                {
-                    Player.scrapDASHCD+= 0.1f;
-                    Director.LogTemp("+" + Director.C("DASH", Color.green) + " from " + Director.C("SCRAP", cc) + "!", Color.white, 2f);
-                }
-                else
-                {
-
-                }
-            }
-
-
-            Destroy(gameObject);
+            
         }
     }
 }

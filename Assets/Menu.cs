@@ -23,6 +23,9 @@ public class Menu : MonoBehaviour
         { 9, 9999f },
         { 10, 9999f },
         { 11, 9999f },
+        { 12, 9999f },
+        { 13, 9999f },
+        { 14, 9999f },
     };
     public static bool hasplayedonetime = false; 
     GameObject timesobject;

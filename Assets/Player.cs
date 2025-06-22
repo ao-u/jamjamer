@@ -90,7 +90,7 @@ public class Player : MonoBehaviour
     }
     void UIStuff()
     {
-        //Im gonna HURT POEPLE IM GONNA HURT PEOPLE WHY CANT I LERP IN UPDATE WHY CANT I LERP IN UPDATE WHY WHYW HY WHYW HYW HY IVE TRIDEE EVERYTHING
+        //WHY CANT I LERP IN UPDATE WHY CANT I LERP IN UPDATE WHY WHYW HY WHYW HYW HY IVE TRIDEE EVERYTHING
         float lerpvalue = .97f;
         lerpvalue /= 1f + Time.deltaTime;
         float lerpvalue2 = .94f;
@@ -200,15 +200,7 @@ public class Player : MonoBehaviour
 
         Vector3 r = rb.velocity;
 
-        //get closest point to butt sphere of player
         
-
-        //base speed
-
-        
-            //GameObject g = Instantiate(Resources.Load<GameObject>("prefabs/item3"), transform.position, transform.rotation);
-        
-
 
 
         //get closest point to butt sphere of player
@@ -245,17 +237,19 @@ public class Player : MonoBehaviour
 
         }
 
+
         //movement
         Vector3 wishdir = ori.forward * vertical + ori.right * horizontal;
         wishdir = wishdir.normalized;
 
         
+        //make walls unsticky
         if (touchingsurface)
         {
-            Vector3 surfaceNormal = (spherepos - point).normalized;
-            if (Vector3.Dot(wishdir, surfaceNormal) < 0f)
+            Vector3 surfnormall = (spherepos - point).normalized;
+            if (Vector3.Dot(wishdir, surfnormall) < 0f)
             {
-                wishdir = Vector3.ProjectOnPlane(wishdir, surfaceNormal);
+                wishdir = Vector3.ProjectOnPlane(wishdir, surfnormall);
             }
                 
         }
@@ -296,7 +290,7 @@ public class Player : MonoBehaviour
             Director.LogConst("STR:" + scrapSTRENGTH + " SPD:" + scrapSPEED + " DCD:" + scrapDASHCD, "stats", Color.white);
         }
         
-
+        //interactions
 
         RaycastHit rayhit;
         Ray ray = new Ray(maincamera.transform.position, maincamera.transform.forward);

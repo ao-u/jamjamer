@@ -65,12 +65,15 @@ public class Director : MonoBehaviour
         }
 
         Color c = Color.white;
-        Director.LogTemp("Your " + Director.C("QUOTA", Color.magenta) + " must be reached within your feeble lifespan.", c, 5f);
+        if (quotatier == 1)
+            Director.LogTemp("Your " + Director.C("QUOTA", Color.magenta) + " must be reached within your feeble lifespan.", c, 5f);
         yield return new WaitForSeconds(3f);
         Color cc = new Color(.6f, .2f, .2f);
-        Director.LogTemp("Feed the machine " + Director.C("SCRAP", cc) + " to meet your " + Director.C("QUOTA", Color.magenta) + ".", c, 5f);
+        if (quotatier == 1)
+            Director.LogTemp("Feed the machine " + Director.C("SCRAP", cc) + " to meet your " + Director.C("QUOTA", Color.magenta) + ".", c, 5f);
         yield return new WaitForSeconds(3f);
-        Director.LogTemp("Feed the machine " + Director.C("FLESH", Color.red) + " in order to live longer.", c, 5f);
+        if (quotatier == 1)
+            Director.LogTemp("Feed the machine " + Director.C("FLESH", Color.red) + " in order to live longer.", c, 5f);
     }
     public static IEnumerator DeathCo()
     {
@@ -95,7 +98,7 @@ public class Director : MonoBehaviour
             fleshtimer = j % 2 == 0 ? Random.Range(4f, 24f) : Random.Range(40f, 70f);
             fleshtimerUI.transform.Find("fa").Find("Fill").GetComponent<Image>().color = cc;
 
-
+            Director.PlaySound("death", aud);
             yield return new WaitForSeconds(.2f);
 
 
@@ -214,7 +217,7 @@ public class Director : MonoBehaviour
     }
     public static void CalculateQuota()
     {
-        quota = (int)Mathf.Pow(quotatier, 2f);
+        quota = (int)Mathf.Pow(quotatier, 2f) + 1;
     }
 
     public class Log 
